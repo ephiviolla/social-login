@@ -1,0 +1,49 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  default:
+    format: '%(asctime)s [%(levelname)s] %(filename)s:line%(lineno)d - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+  sql:
+    format: '%(asctime)s [SQL] %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: default
+    level: DEBUG
+
+  file:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: default
+    filename: logs/app.log
+    when: midnight
+    interval: 1
+    backupCount: 30
+    encoding: utf-8
+
+  sql_file:
+    class: logging.handlers.TimedRotatingFileHandler
+    formatter: sql
+    filename: logs/sqlalchemy_queries.log
+    when: midnight
+    interval: 1
+    backupCount: 30
+    encoding: utf-8
+
+loggers:
+  fastapi:
+    handlers: [ console, file ]
+    level: DEBUG
+    propagate: False
+
+  sqlalchemy.engine:
+    handlers: [ sql_file ]
+    level: INFO
+    propagate: False
+
+root:
+  handlers: [ console, file ]
+  level: DEBUG
